@@ -1,0 +1,66 @@
+{
+    "uber_managements": [
+        {
+            "id": 1,
+            "day": "2024-01-25",
+            "weekday": "Quinta-Feira",
+            "kilometer": 237,
+            "balance_kilometer": 787,
+            "average_comsuption": 12.9,
+            "worked_hours": 9.5,
+            "prejudice": 10,
+            "receipt_id": 1,
+            "costs": {
+                "liter_gasoline_value": 5.08,
+                "cost_by_gasoline": 106.10,
+                "rent": 161.45,
+                "total_cost_by_kilometer": 0.88,
+                "total_cost": 220.74
+            },
+            "receipts": {
+                "id": 1,
+                "uber_value": 245.19,
+                "99_pop_value": 90.53,
+                "promotions": 67.78,
+                "run_outside": 56.90,
+                "total_receipt_by_kilometer": 1.74
+            },
+            "profit": {
+                "day": 171.40,
+                "hour": 13.18,
+                "profit_by_kilometer": 0.74
+            }
+        },
+        {
+            "id": 1,
+            "day": "2024-01-25",
+            "weekday": "Quinta-Feira",
+            "kilometer": 237,
+            "balance_kilometer": 787,
+            "average_comsuption": 12.9,
+            "worked_hours": 9.5,
+            "prejudice": 10,
+            "receipt_id": 1,
+            "costs": {
+                "liter_gasoline_value": 5.08,
+                "cost_by_gasoline": 106.10,
+                "rent": 161.45,
+                "total_cost_by_kilometer": 0.88,
+                "total_cost": 220.74
+            },
+            "receipts": {
+                "id": 1,
+                "uber_value": 245.19,
+                "99_pop_value": 90.53,
+                "promotions": 67.78,
+                "run_outside": 56.90,
+                "total_aquisition_by_kilometer": 1.74
+            },
+            "profit": {
+                "day": 171.40,
+                "hour": 13.18,
+                "profit_by_kilometer": 0.74
+            }
+        }
+    ]
+}

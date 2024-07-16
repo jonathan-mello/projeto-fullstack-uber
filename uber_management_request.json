@@ -1,0 +1,16 @@
+{
+    "day": "2024-01-25",
+    "weekday": "Quinta-Feira",
+    "kilometer": 237,
+    "balance_kilometer": 787,
+    "average_comsuption": 12.9,
+    "liter_gasoline_value": 5.08,
+    "worked_hours": 9.5,
+    "prejudice": 10,
+    "receipts": {
+        "uber_value": 245.19,
+        "99_pop_value": 90.53,
+        "promotions": 67.78,
+        "run_outside": 56.90
+    }
+}

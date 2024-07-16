@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Receitas, Custos e Lucros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2F4F4F;
+            color: #FFF;
+        }
+
+        .table1 {
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        .icon {
+            cursor: pointer;
+        }
+
+        .icon:hover {
+            color: #FFD700;
+        }
+
+        .tbody {
+            background-color: white;
+        }
+
+        .header {
+            width: 90%;
+            display: block;
+            text-align: center;
+            padding: 12px;
+            font-size: 36px;
+        }
+
+        .buttons {
+            margin: 10px 0 0 750px;
+        }
+
+        .adicionar {
+            display: flex;
+            align-items: center;
+            margin: 1.5% 2% 0 0;
+        }
+
+
+        .subadicionar {
+            padding: 12px;
+            cursor: pointer;
+            border: solid;
+            background-color: #1d9738;
+            text-align: center;
+        }
+
+        .subadicionar:hover {
+            color: #000000;
+        }
+
+        .subcancelar {
+            padding: 12px;
+            cursor: pointer;
+            border: solid;
+            background-color: #ad0202;
+            text-align: center;
+        }
+
+        .subcancelar:hover {
+            color: #000000;
+        }
+
+        .table2 {
+            display: block;
+            text-align: center;
+            border-collapse: collapse;
+            margin: 0 0 0 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">INSERÇÃO DE VALORES</div>
+    <table class="table1">
+        <thead>
+            <tr>
+                <th>DATA</th>
+                <th>DIA DA SEMANA</th>
+                <th>QUILOMETRAGEM</th>
+                <th>SALDO DE QUILOMETROS</th>
+                <th>MÉDIA CONSUMO</th>
+                <th>VLR LITRO DA GASOLINA</th>
+                <th>HORAS TRABALHADAS</th>
+                <th>PREJUÍZOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="date"></td>
+                <td><input type="text"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div></div>
+
+    <table class="table2">
+        <thead>
+            <tr>
+                <th>UBER</th>
+                <th>99 POP</th>
+                <th>PROMOÇÕES</th>
+                <th>CORRIDAS POR FORA</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="buttons">
+        <div class="adicionar">
+            <div id="btnAbrir" class="subadicionar" onclick="adicionaDados()">&#43 Adicionar</div>
+            <div class="subcancelar" id="btnVoltar">Cancelar</div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("btnVoltar").addEventListener("click", function () {
+
+            window.location.href = "index.html";
+        });
+
+    </script>
+</body>
+
+</html>
