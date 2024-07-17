@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Receitas, Custos e Lucros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2F4F4F;
+            color: #FFF;
+        }
+
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4682B4;
+            color: #FFF;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        .header-receitas {
+            background-color: #4682B4;
+        }
+
+        .header-custos {
+            background-color: #B22222;
+        }
+
+        .header-lucro {
+            background-color: #1d9738;
+        }
+
+        .icon {
+            cursor: pointer;
+        }
+
+        .icon:hover {
+            color: #FFD700;
+        }
+
+        .no_edition {
+            background-color: #2F4F4F;
+        }
+
+        .adicionar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 1.5% 2% 0 0;
+        }
+
+
+        .subadicionar {
+            padding: 12px;
+            margin-left: auto;
+            cursor: pointer;
+            border: solid;
+            background-color: #1d9738;
+            text-align: center;
+        }
+
+        .subadicionar:hover {
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="adicionar">
+        <div id="btnAdd" class="subadicionar">&#43 Adicionar</div>
+    </div>
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th class="no_edition">DIA</th>
+                <th class="header-receitas">RECEITAS TOTAIS</th>
+                <th class="header-receitas">RECEITA P/ KM</th>
+                <th class="header-custos">CUSTOS TOTAIS</th>
+                <th class="header-custos">CUSTOS P/ KM</th>
+                <th class="header-lucro">LUCRO DO DIA</th>
+                <th class="header-lucro">LUCRO P/ HORA</th>
+                <th class="header-lucro">LUCRO P/ KM</th>
+                <th class="no_edition">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const newData = JSON.parse(localStorage.getItem('newData'));
+
+            if (newData && newData.receipt_id) {
+                const tbody = document.querySelector("#myTable tbody");
+                const row = document.createElement("tr");
+
+                const dayCell = document.createElement("td");
+                dayCell.textContent = newData.day;
+                row.appendChild(dayCell);
+
+                const receitasTotais = (newData.receipt_id.uber_value || 0) + (newData.receipt_id.pop_99_value || 0) + (newData.receipt_id.promotions || 0) + (newData.receipt_id.run_outside || 0);
+                const receitaPorKm = receitasTotais / newData.kilometer;
+                const receitasTotaisCell = document.createElement("td");
+                receitasTotaisCell.textContent = receitasTotais.toFixed(2);
+                const receitaPorKmCell = document.createElement("td");
+                receitaPorKmCell.textContent = receitaPorKm.toFixed(2);
+                row.appendChild(receitasTotaisCell);
+                row.appendChild(receitaPorKmCell);
+
+                const custosTotais = (newData.kilometer / newData.average_comsuption) * newData.liter_gasoline_value + newData.prejudice;
+                const custosPorKm = custosTotais / newData.kilometer;
+                const custosTotaisCell = document.createElement("td");
+                custosTotaisCell.textContent = custosTotais.toFixed(2);
+                const custosPorKmCell = document.createElement("td");
+                custosPorKmCell.textContent = custosPorKm.toFixed(2);
+                row.appendChild(custosTotaisCell);
+                row.appendChild(custosPorKmCell);
+
+                const lucroDoDia = receitasTotais - custosTotais;
+                const lucroPorHora = lucroDoDia / newData.worked_hours;
+                const lucroPorKm = lucroDoDia / newData.kilometer;
+                const lucroDoDiaCell = document.createElement("td");
+                lucroDoDiaCell.textContent = lucroDoDia.toFixed(2);
+                const lucroPorHoraCell = document.createElement("td");
+                lucroPorHoraCell.textContent = lucroPorHora.toFixed(2);
+                const lucroPorKmCell = document.createElement("td");
+                lucroPorKmCell.textContent = lucroPorKm.toFixed(2);
+                row.appendChild(lucroDoDiaCell);
+                row.appendChild(lucroPorHoraCell);
+                row.appendChild(lucroPorKmCell);
+
+                const acoesCell = document.createElement("td");
+                acoesCell.textContent = "Editar/Excluir";
+                row.appendChild(acoesCell);
+
+                tbody.appendChild(row);
+
+                localStorage.removeItem('newData');
+            }
+        });
+
+        document.getElementById("btnAdd").addEventListener("click", function () {
+            window.location.href = "/add";
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Receitas, Custos e Lucros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2F4F4F;
+            color: #FFF;
+            height: 100%;
+        }
+
+        .container {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            font-size: 36px;
+        }
+
+        .form {
+            font-size: 14px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        label {
+            width: 200px;
+            display: inline-block;
+        }
+
+        input {
+            width: 200px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        .subAdd {
+            padding: 12px;
+            cursor: pointer;
+            border: solid;
+            background-color: #1d9738;
+            text-align: center;
+        }
+
+        .subAdd:hover {
+            color: #000000;
+        }
+
+        .subCancel {
+            padding: 12px;
+            cursor: pointer;
+            border: solid;
+            background-color: #ad0202;
+            text-align: center;
+        }
+
+        .subCancel:hover {
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">INSERÇÃO DE VALORES</div>
+    <form class="form" id="myForm">
+
+        <label for="day">DATA</label>
+        <input type="date" id="day" name="day">
+        <br><br>
+        <label for="weekday">DIA DA SEMANA</label>
+        <input type="text" id="weekday" name="weekday">
+        <br><br>
+        <label for="kilometer">QUILOMETRAGEM</label>
+        <input type="number" id="kilometer" name="kilometer">
+        <br><br>
+        <label for="balance_kilometer">SALDO DE QUILOMETROS</label>
+        <input type="number" id="balance_kilometer" name="balance_kilometer">
+        <br><br>
+        <label for="average_comsuption">MÉDIA CONSUMO</label>
+        <input type="number" id="average_comsuption" name="average_comsuption">
+        <br><br>
+        <label for="liter_gasoline_value">VLR LITRO DA GASOLINA</label>
+        <input type="number" id="liter_gasoline_value" name="liter_gasoline_value">
+        <br><br>
+        <label for="worked_hours">HORAS TRABALHADAS</label>
+        <input type="number" id="worked_hours" name="worked_hours">
+        <br><br>
+        <label for="prejudice">PREJUÍZOS</label>
+        <input type="number" id="prejudice" name="prejudice">
+        <br><br>
+
+        <label for="uber_value">UBER</label>
+        <input type="number" id="uber_value" name="uber_value">
+        <br><br>
+        <label for="pop_99_value">99 POP</label>
+        <input type="number" id="pop_99_value" name="pop_99_value">
+        <br><br>
+        <label for="promotions">PROMOÇÕES</label>
+        <input type="number" id="promotions" name="promotions">
+        <br><br>
+        <label for="run_outside">CORRIDAS POR FORA</label>
+        <input type="number" id="run_outside" name="run_outside">
+        <br><br>
+
+    </form>
+
+
+    <div class="buttons">
+        <div class="subAdd" id="btnAdd" onclick="sendData()">&#43 Adicionar</div>
+        <div class="subCancel" id="btnBack">Cancelar</div>
+    </div>
+
+    <script>
+        function sendData() {
+            const form = document.getElementById("myForm");
+            const formData = new FormData(form);
+            const data = {
+                day: formData.get("day"),
+                weekday: formData.get("weekday"),
+                kilometer: parseFloat(formData.get("kilometer")),
+                balance_kilometer: parseFloat(formData.get("balance_kilometer")),
+                average_comsuption: parseFloat(formData.get("average_comsuption")),
+                liter_gasoline_value: parseFloat(formData.get("liter_gasoline_value")),
+                worked_hours: parseFloat(formData.get("worked_hours")),
+                prejudice: parseFloat(formData.get("prejudice")),
+                receipt_id: {
+                    uber_value: parseFloat(formData.get("uber_value")),
+                    pop_99_value: parseFloat(formData.get("pop_99_value")),
+                    promotions: parseFloat(formData.get("promotions")),
+                    run_outside: parseFloat(formData.get("run_outside"))
+                }
+            };
+
+            const date = new Date(data.day);
+            data.day = date.toISOString().split("T")[0];
+
+            fetch("/api/v1/uber/management", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                    localStorage.setItem('newData', JSON.stringify(data));
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.error("Error", error);
+                });
+        }
+
+        document.getElementById("btnBack").addEventListener("click", function () {
+            window.location.href = "/";
+        });
+    </script>
+
+</body>
+
+</html>
