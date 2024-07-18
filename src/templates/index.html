@@ -89,6 +89,7 @@
     <table id="myTable">
         <thead>
             <tr>
+                <th class="no_edition">ID</th>
                 <th class="no_edition">DIA</th>
                 <th class="header-receitas">RECEITAS TOTAIS</th>
                 <th class="header-receitas">RECEITA P/ KM</th>
@@ -107,60 +108,98 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const newData = JSON.parse(localStorage.getItem('newData'));
+            fetch("/api/v1/uber/consult")
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#myTable tbody");
 
-            if (newData && newData.receipt_id) {
-                const tbody = document.querySelector("#myTable tbody");
-                const row = document.createElement("tr");
+                    data.forEach(item => {
+                        const row = document.createElement("tr");
 
-                const dayCell = document.createElement("td");
-                dayCell.textContent = newData.day;
-                row.appendChild(dayCell);
+                        const idCell = document.createElement("td")
+                        idCell.textContent = item.receipt_id
+                        const dayCell = document.createElement("td");
+                        dayCell.textContent = item.day;
+                        row.appendChild(idCell);
+                        row.appendChild(dayCell);
 
-                const receitasTotais = (newData.receipt_id.uber_value || 0) + (newData.receipt_id.pop_99_value || 0) + (newData.receipt_id.promotions || 0) + (newData.receipt_id.run_outside || 0);
-                const receitaPorKm = receitasTotais / newData.kilometer;
-                const receitasTotaisCell = document.createElement("td");
-                receitasTotaisCell.textContent = receitasTotais.toFixed(2);
-                const receitaPorKmCell = document.createElement("td");
-                receitaPorKmCell.textContent = receitaPorKm.toFixed(2);
-                row.appendChild(receitasTotaisCell);
-                row.appendChild(receitaPorKmCell);
+                        const receitasTotais = (item.receipts.uber_value || 0) + (item.receipts.pop_99_value || 0) + (item.receipts.promotions || 0) + (item.receipts.run_outside || 0);
+                        const receitaPorKm = receitasTotais / item.kilometer;
+                        const receitasTotaisCell = document.createElement("td");
+                        receitasTotaisCell.textContent = receitasTotais.toFixed(2);
+                        const receitaPorKmCell = document.createElement("td");
+                        receitaPorKmCell.textContent = receitaPorKm.toFixed(2);
+                        row.appendChild(receitasTotaisCell);
+                        row.appendChild(receitaPorKmCell);
 
-                const custosTotais = (newData.kilometer / newData.average_comsuption) * newData.liter_gasoline_value + newData.prejudice;
-                const custosPorKm = custosTotais / newData.kilometer;
-                const custosTotaisCell = document.createElement("td");
-                custosTotaisCell.textContent = custosTotais.toFixed(2);
-                const custosPorKmCell = document.createElement("td");
-                custosPorKmCell.textContent = custosPorKm.toFixed(2);
-                row.appendChild(custosTotaisCell);
-                row.appendChild(custosPorKmCell);
+                        const custosAluguel = 0.54
+                        const custosTotais = (item.kilometer / item.average_comsuption) * item.costs.liter_gasoline_value + item.prejudice + (item.kilometer * custosAluguel);
+                        const custosPorKm = custosTotais / item.kilometer;
+                        const custosTotaisCell = document.createElement("td");
+                        custosTotaisCell.textContent = custosTotais.toFixed(2);
+                        const custosPorKmCell = document.createElement("td");
+                        custosPorKmCell.textContent = custosPorKm.toFixed(2);
+                        row.appendChild(custosTotaisCell);
+                        row.appendChild(custosPorKmCell);
 
-                const lucroDoDia = receitasTotais - custosTotais;
-                const lucroPorHora = lucroDoDia / newData.worked_hours;
-                const lucroPorKm = lucroDoDia / newData.kilometer;
-                const lucroDoDiaCell = document.createElement("td");
-                lucroDoDiaCell.textContent = lucroDoDia.toFixed(2);
-                const lucroPorHoraCell = document.createElement("td");
-                lucroPorHoraCell.textContent = lucroPorHora.toFixed(2);
-                const lucroPorKmCell = document.createElement("td");
-                lucroPorKmCell.textContent = lucroPorKm.toFixed(2);
-                row.appendChild(lucroDoDiaCell);
-                row.appendChild(lucroPorHoraCell);
-                row.appendChild(lucroPorKmCell);
+                        const lucroDoDia = receitasTotais - custosTotais;
+                        const lucroPorHora = lucroDoDia / item.worked_hours;
+                        const lucroPorKm = lucroDoDia / item.kilometer;
+                        const lucroDoDiaCell = document.createElement("td");
+                        lucroDoDiaCell.textContent = lucroDoDia.toFixed(2);
+                        const lucroPorHoraCell = document.createElement("td");
+                        lucroPorHoraCell.textContent = lucroPorHora.toFixed(2);
+                        const lucroPorKmCell = document.createElement("td");
+                        lucroPorKmCell.textContent = lucroPorKm.toFixed(2);
+                        row.appendChild(lucroDoDiaCell);
+                        row.appendChild(lucroPorHoraCell);
+                        row.appendChild(lucroPorKmCell);
 
-                const acoesCell = document.createElement("td");
-                acoesCell.textContent = "Editar/Excluir";
-                row.appendChild(acoesCell);
+                        const acoesCell = document.createElement("td");
+                        acoesCell.innerHTML = '<span class="icon" onclick="editRow(this)">✏️</span> <span class="icon" onclick="deleteRow(this)">🗑️</span>';;
+                        row.appendChild(acoesCell);
 
-                tbody.appendChild(row);
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
 
-                localStorage.removeItem('newData');
+        })
+
+        function editRow() {
+
+        }
+
+        async function deleteRow(button) {
+            const tr = button.closest("tr");
+            const itemId = tr.querySelector("td").innerText;
+
+            try {
+                const response = await fetch(`api/v1/uber/delete?id=${itemId}`, {
+                    method: 'DELETE'
+                });
+                console.log(response)
+                if (!response.ok) {
+                    const errorMessage = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+                }
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Erro ao deletar item.');
             }
-        });
+
+            window.location.href = "/"
+
+        }
 
         document.getElementById("btnAdd").addEventListener("click", function () {
             window.location.href = "/add";
         });
+
     </script>
 
 </body>

@@ -70,42 +70,42 @@
     <div class="container">INSERÇÃO DE VALORES</div>
     <form class="form" id="myForm">
 
-        <label for="day">DATA</label>
-        <input type="date" id="day" name="day">
+        <label for="day">DATA*</label>
+        <input type="date" id="day" name="day" required>
         <br><br>
-        <label for="weekday">DIA DA SEMANA</label>
-        <input type="text" id="weekday" name="weekday">
+        <label for="weekday">DIA DA SEMANA*</label>
+        <input type="text" id="weekday" name="weekday" required>
         <br><br>
-        <label for="kilometer">QUILOMETRAGEM</label>
-        <input type="number" id="kilometer" name="kilometer">
+        <label for="kilometer">QUILOMETRAGEM*</label>
+        <input type="number" id="kilometer" name="kilometer" required>
         <br><br>
-        <label for="balance_kilometer">SALDO DE QUILOMETROS</label>
-        <input type="number" id="balance_kilometer" name="balance_kilometer">
+        <label for="balance_kilometer">SALDO DE QUILOMETROS*</label>
+        <input type="number" id="balance_kilometer" name="balance_kilometer" value=0>
         <br><br>
-        <label for="average_comsuption">MÉDIA CONSUMO</label>
-        <input type="number" id="average_comsuption" name="average_comsuption">
+        <label for="average_comsuption">MÉDIA CONSUMO*</label>
+        <input type="number" id="average_comsuption" name="average_comsuption" required>
         <br><br>
-        <label for="liter_gasoline_value">VLR LITRO DA GASOLINA</label>
-        <input type="number" id="liter_gasoline_value" name="liter_gasoline_value">
+        <label for="liter_gasoline_value">VLR LITRO DA GASOLINA*</label>
+        <input type="number" id="liter_gasoline_value" name="liter_gasoline_value" required>
         <br><br>
-        <label for="worked_hours">HORAS TRABALHADAS</label>
-        <input type="number" id="worked_hours" name="worked_hours">
+        <label for="worked_hours">HORAS TRABALHADAS*</label>
+        <input type="number" id="worked_hours" name="worked_hours" required>
         <br><br>
-        <label for="prejudice">PREJUÍZOS</label>
-        <input type="number" id="prejudice" name="prejudice">
+        <label for="prejudice">PREJUÍZOS*</label>
+        <input type="number" id="prejudice" name="prejudice" required>
         <br><br>
 
-        <label for="uber_value">UBER</label>
-        <input type="number" id="uber_value" name="uber_value">
+        <label for="uber_value">UBER*</label>
+        <input type="number" id="uber_value" name="uber_value" required>
         <br><br>
-        <label for="pop_99_value">99 POP</label>
-        <input type="number" id="pop_99_value" name="pop_99_value">
+        <label for="pop_99_value">99 POP*</label>
+        <input type="number" id="pop_99_value" name="pop_99_value" required>
         <br><br>
-        <label for="promotions">PROMOÇÕES</label>
-        <input type="number" id="promotions" name="promotions">
+        <label for="promotions">PROMOÇÕES*</label>
+        <input type="number" id="promotions" name="promotions" required>
         <br><br>
-        <label for="run_outside">CORRIDAS POR FORA</label>
-        <input type="number" id="run_outside" name="run_outside">
+        <label for="run_outside">CORRIDAS POR FORA*</label>
+        <input type="number" id="run_outside" name="run_outside" required>
         <br><br>
 
     </form>
@@ -148,9 +148,8 @@
                 body: JSON.stringify(data)
             })
                 .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                    localStorage.setItem('newData', JSON.stringify(data));
+                .then(responseData => {
+                    console.log("Success:", responseData);
                     window.location.href = "/";
                 })
                 .catch(error => {
@@ -162,6 +161,7 @@
             window.location.href = "/";
         });
     </script>
+
 
 </body>
 

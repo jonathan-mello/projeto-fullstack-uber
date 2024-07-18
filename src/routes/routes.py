@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query
 from src.database.connection import get_db, UberManagement, UberManagementReceipts
 from sqlalchemy.orm import Session
 from sqlalchemy import join
@@ -12,6 +12,7 @@ router = APIRouter()
 def root():
     file_path = os.path.join(os.path.dirname(__file__), "..", "templates", "index.html")
     return FileResponse(file_path)
+
 
 @router.get("/add", response_class=FileResponse)
 def addDay():
@@ -64,7 +65,7 @@ def save_management(req: dict, db: Session = Depends(get_db)):
     return {"Message": "Dados inseridos com sucesso!"}
 
 
-@router.get("/api/v1/uber/receipts")
+@router.get("/api/v1/uber/consult")
 def query_data(db: Session = Depends(get_db)):
     dados = (
         db.query(UberManagement)
@@ -140,3 +141,28 @@ def query_data(db: Session = Depends(get_db)):
         results.append(result)
 
     return results
+
+
+@router.delete("/api/v1/uber/delete")
+def delete(id: int = Query(...), db: Session = Depends(get_db)):
+    itemManagement = (
+        db.query(UberManagement).filter(UberManagement.receipt_id == id).first()
+    )
+    if itemManagement:
+        db.delete(itemManagement)
+        db.commit()
+        db.close()
+        
+    itemReceipt = (
+        db.query(UberManagementReceipts).filter(UberManagementReceipts.id == id).first()
+    )
+    if itemReceipt:
+        db.delete(itemReceipt)
+        db.commit()
+        db.close()
+        return {"message": "Item deletado com sucesso!"}
+    else:
+        raise HTTPException(status_code=404, details="Item not found")
+
+@router.put("/api/v1/uber/update")
+def 
