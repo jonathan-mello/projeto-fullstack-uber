@@ -168,7 +168,14 @@
 
         })
 
-        function editRow() {
+        function editRow(button) {
+            const tr = button.closest("tr");
+            const itemId = tr.querySelector("td").innerText;
+
+            localStorage.setItem("itemId", itemId)
+            
+
+            window.location.href = "/update"
 
         }
 
@@ -180,7 +187,7 @@
                 const response = await fetch(`api/v1/uber/delete?id=${itemId}`, {
                     method: 'DELETE'
                 });
-                console.log(response)
+                
                 if (!response.ok) {
                     const errorMessage = await response.text();
                     throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);

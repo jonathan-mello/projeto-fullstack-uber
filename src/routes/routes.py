@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import join
 from fastapi.responses import FileResponse
 import os
+import httpx
 
 router = APIRouter()
 
@@ -17,6 +18,14 @@ def root():
 @router.get("/add", response_class=FileResponse)
 def addDay():
     file_path = os.path.join(os.path.dirname(__file__), "..", "templates", "add.html")
+    return FileResponse(file_path)
+
+
+@router.get("/update", response_class=FileResponse)
+def updateDay():
+    file_path = os.path.join(
+        os.path.dirname(__file__), "..", "templates", "update.html"
+    )
     return FileResponse(file_path)
 
 
@@ -152,7 +161,7 @@ def delete(id: int = Query(...), db: Session = Depends(get_db)):
         db.delete(itemManagement)
         db.commit()
         db.close()
-        
+
     itemReceipt = (
         db.query(UberManagementReceipts).filter(UberManagementReceipts.id == id).first()
     )
@@ -164,5 +173,19 @@ def delete(id: int = Query(...), db: Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=404, details="Item not found")
 
-@router.put("/api/v1/uber/update")
-def 
+
+@router.get("/api/v1/uber/getday/costs")
+def getDay(id: int, db: Session = Depends(get_db)):
+    query = db.query(UberManagement)
+    query = query.filter(UberManagement.receipt_id == id)
+    costs = query.all()
+    
+    return costs
+
+@router.get("/api/v1/uber/getday/receipts")
+def getDay(id: int, db: Session = Depends(get_db)):
+    query = db.query(UberManagementReceipts)
+    query = query.filter(UberManagementReceipts.id == id)
+    receipts = query.all()
+    
+    return receipts
