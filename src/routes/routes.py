@@ -160,7 +160,7 @@ def delete(id: int = Query(...), db: Session = Depends(get_db)):
         db.close()
 
     itemReceipt = (
-        db.query(UberManagementReceipts).filter(UberManagementReceipts.id == id).first()
+        db.query(UberManagementReceipts).filter(UberManagementReceipts.id == itemManagement.receipt_id).first()
     )
     if itemReceipt:
         db.delete(itemReceipt)
