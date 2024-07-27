@@ -117,7 +117,7 @@
                         const row = document.createElement("tr");
 
                         const idCell = document.createElement("td")
-                        idCell.textContent = item.receipt_id
+                        idCell.textContent = item.id
                         const dayCell = document.createElement("td");
                         dayCell.textContent = item.day;
                         row.appendChild(idCell);
@@ -133,7 +133,7 @@
                         row.appendChild(receitaPorKmCell);
 
                         const custosAluguel = 0.54
-                        const custosTotais = (item.kilometer / item.average_comsuption) * item.costs.liter_gasoline_value + item.prejudice + (item.kilometer * custosAluguel);
+                        const custosTotais = item.costs.total_cost;
                         const custosPorKm = custosTotais / item.kilometer;
                         const custosTotaisCell = document.createElement("td");
                         custosTotaisCell.textContent = custosTotais.toFixed(2);

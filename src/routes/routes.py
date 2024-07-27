@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from src.database.connection import get_db, UberManagement, UberManagementReceipts
 from sqlalchemy.orm import Session
-from sqlalchemy import join
+from sqlalchemy import join, update
 from fastapi.responses import FileResponse
 import os
-import httpx
 
 router = APIRouter()
 
@@ -40,7 +39,7 @@ def save_management(req: dict, db: Session = Depends(get_db)):
     worked_hours = req.get("worked_hours")
     prejudice = req.get("prejudice")
 
-    data_uber_receipts = req.get("receipt_id")
+    data_uber_receipts = req.get("receipt")
     uber_value = data_uber_receipts["uber_value"]
     pop_99_value = data_uber_receipts["pop_99_value"]
     promotions = data_uber_receipts["promotions"]
@@ -154,9 +153,7 @@ def query_data(db: Session = Depends(get_db)):
 
 @router.delete("/api/v1/uber/delete")
 def delete(id: int = Query(...), db: Session = Depends(get_db)):
-    itemManagement = (
-        db.query(UberManagement).filter(UberManagement.receipt_id == id).first()
-    )
+    itemManagement = db.query(UberManagement).filter(UberManagement.id == id).first()
     if itemManagement:
         db.delete(itemManagement)
         db.commit()
@@ -174,18 +171,86 @@ def delete(id: int = Query(...), db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, details="Item not found")
 
 
-@router.get("/api/v1/uber/getday/costs")
+@router.get("/api/v1/uber/getday")
 def getDay(id: int, db: Session = Depends(get_db)):
-    query = db.query(UberManagement)
-    query = query.filter(UberManagement.receipt_id == id)
-    costs = query.all()
-    
-    return costs
+    dados = (
+        db.query(UberManagement)
+        .join(
+            UberManagementReceipts,
+            UberManagement.receipt_id == UberManagementReceipts.id,
+        )
+        .all()
+    )
 
-@router.get("/api/v1/uber/getday/receipts")
-def getDay(id: int, db: Session = Depends(get_db)):
-    query = db.query(UberManagementReceipts)
-    query = query.filter(UberManagementReceipts.id == id)
-    receipts = query.all()
-    
-    return receipts
+
+    results = []
+    for dado in dados:
+        result = {
+            "day": dado.day,
+            "weekday": dado.weekday,
+            "kilometer": dado.kilometer,
+            "balance_kilometer": dado.balance_kilometer,
+            "average_cumsuption": dado.average_comsuption,
+            "liter_gasoline_value": dado.liter_gasoline_value,
+            "worked_hours": dado.worked_hours,
+            "prejudice": dado.prejudice,
+            "receipt": {
+                "uber_value": dado.receipt.uber_value,
+                "pop_99_value": dado.receipt.pop_99_value,
+                "promotions": dado.receipt.promotions,
+                "run_outside": dado.receipt.run_outside,
+            },
+        }
+
+        results.append(result)
+
+
+    query = db.query(UberManagement)
+    query = query.filter(UberManagement.id == id)
+    get_day = query.all()
+
+    return get_day
+
+
+
+@router.put("/api/v1/uber/update")
+async def updateDay(id: int, req: dict, db: Session = Depends(get_db)):
+    management = db.query(UberManagement).filter(UberManagement.id == id).first()
+    if not management:
+        raise HTTPException(status_code=404, detail="Item não encontrado!")
+
+    receipt = (
+        db.query(UberManagementReceipts)
+        .filter(UberManagementReceipts.id == management.receipt_id)
+        .first()
+    )
+    if not receipt:
+        raise HTTPException(status_code=404, detail="Receipt não encontrado!")
+
+    management.day = req.get("day", management.day)
+    management.weekday = req.get("weekday", management.weekday)
+    management.kilometer = req.get("kilometer", management.kilometer)
+    management.balance_kilometer = req.get(
+        "balance_kilometer", management.balance_kilometer
+    )
+    management.average_comsuption = req.get(
+        "average_comsuption", management.average_comsuption
+    )
+    management.liter_gasoline_value = req.get(
+        "liter_gasoline_value", management.liter_gasoline_value
+    )
+    management.worked_hours = req.get("worked_hours", management.worked_hours)
+    management.prejudice = req.get("prejudice", management.prejudice)
+
+    receipt_data = req.get("receipt")
+    if receipt_data:
+        receipt.uber_value = receipt_data.get("uber_value", receipt.uber_value)
+        receipt.pop_99_value = receipt_data.get("pop_99_value", receipt.pop_99_value)
+        receipt.promotions = receipt_data.get("promotions", receipt.promotions)
+        receipt.run_outside = receipt_data.get("run_outside", receipt.run_outside)
+
+    db.commit()
+    db.refresh(management)
+    db.refresh(receipt)
+
+    return {"message": "Dados atualizados com sucesso!"}

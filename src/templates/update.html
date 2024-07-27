@@ -112,7 +112,7 @@
 
 
     <div class="buttons">
-        <div class="subAdd" id="btnAdd" onclick="costs(id)">Salvar</div>
+        <div class="subAdd" id="btnUpdt" onclick="updateData(id)">Salvar</div>
         <div class="subCancel" id="btnBack">Cancelar</div>
     </div>
 
@@ -120,7 +120,7 @@
         document.addEventListener("DOMContentLoaded", async function (id) {
             id = localStorage.getItem("itemId")
 
-            costs = await fetch(`/api/v1/uber/getday/costs?id=${id}`, {
+            costs = await fetch(`/api/v1/uber/getday?id=${id}`, {
                 method: "GET"
             });
 
@@ -135,70 +135,57 @@
                 document.getElementById("liter_gasoline_value").value = item.liter_gasoline_value
                 document.getElementById("worked_hours").value = item.worked_hours
                 document.getElementById("prejudice").value = item.prejudice
+                document.getElementById("uber_value").value = item.receipt.uber_value
+                document.getElementById("pop_99_value").value = item.receipt.pop_99_value
+                document.getElementById("promotions").value = item.receipt.promotions
+                document.getElementById("run_outside").value = item.receipt.run_outside
             });
 
-            receipts(id)
 
-
-            async function receipts(id) {
-                id = localStorage.getItem("itemId")
-
-                receipts = await fetch(`/api/v1/uber/getday/receipts?id=${id}`, {
-                    method: "GET"
-                });
-
-                dataReceipts = await receipts.json()
-
-                dataReceipts.forEach(item => {
-                    document.getElementById("uber_value").value = item.uber_value
-                    document.getElementById("pop_99_value").value = item.pop_99_value
-                    document.getElementById("promotions").value = item.promotions
-                    document.getElementById("run_outside").value = item.run_outside
-                });
-
-            }
         })
 
 
-        // function sendData() {
-        //     const form = document.getElementById("myForm");
-        //     const formData = new FormData(form);
-        //     const data = {
-        //         day: formData.get("day"),
-        //         weekday: formData.get("weekday"),
-        //         kilometer: parseFloat(formData.get("kilometer")),
-        //         balance_kilometer: parseFloat(formData.get("balance_kilometer")),
-        //         average_comsuption: parseFloat(formData.get("average_comsuption")),
-        //         liter_gasoline_value: parseFloat(formData.get("liter_gasoline_value")),
-        //         worked_hours: parseFloat(formData.get("worked_hours")),
-        //         prejudice: parseFloat(formData.get("prejudice")),
-        //         receipt_id: {
-        //             uber_value: parseFloat(formData.get("uber_value")),
-        //             pop_99_value: parseFloat(formData.get("pop_99_value")),
-        //             promotions: parseFloat(formData.get("promotions")),
-        //             run_outside: parseFloat(formData.get("run_outside"))
-        //         }
-        //     };
+        function updateData(id) {
+            const form = document.getElementById("myForm");
+            const formData = new FormData(form);
+            const data = {
+                day: formData.get("day"),
+                weekday: formData.get("weekday"),
+                kilometer: parseFloat(formData.get("kilometer")),
+                balance_kilometer: parseFloat(formData.get("balance_kilometer")),
+                average_comsuption: parseFloat(formData.get("average_comsuption")),
+                liter_gasoline_value: parseFloat(formData.get("liter_gasoline_value")),
+                worked_hours: parseFloat(formData.get("worked_hours")),
+                prejudice: parseFloat(formData.get("prejudice")),
+                receipt_id: {
+                    uber_value: parseFloat(formData.get("uber_value")),
+                    pop_99_value: parseFloat(formData.get("pop_99_value")),
+                    promotions: parseFloat(formData.get("promotions")),
+                    run_outside: parseFloat(formData.get("run_outside"))
+                }
+            };
 
-        //     const date = new Date(data.day);
-        //     data.day = date.toISOString().split("T")[0];
+            const date = new Date(data.day);
+            data.day = date.toISOString().split("T")[0];
 
-        //     fetch("/api/v1/uber/management", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //         .then(response => response.json())
-        //         .then(responseData => {
-        //             console.log("Success:", responseData);
-        //             window.location.href = "/";
-        //         })
-        //         .catch(error => {
-        //             console.error("Error", error);
-        //         });
-        // }
+            id = localStorage.getItem("itemId")
+
+            fetch(`/api/v1/uber/update?id=${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(responseData => {
+                    console.log("Success:", responseData);
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.error("Error", error);
+                });
+        }
 
         document.getElementById("btnBack").addEventListener("click", function () {
             window.location.href = "/";
