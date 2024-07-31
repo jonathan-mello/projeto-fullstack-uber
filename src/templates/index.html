@@ -59,52 +59,78 @@
             background-color: #2F4F4F;
         }
 
-        .adicionar {
+        .header {
+            padding-top: 20px;
+        }
+
+        .container {
+            cursor: pointer;
             display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin: 1.5% 2% 0 0;
+            align-items: top;
+        }
+
+        .btn {
+            padding: 0px 25px;
         }
 
 
         .subadicionar {
             padding: 12px;
-            margin-left: auto;
+            margin: 20px 0px;
             cursor: pointer;
             border: solid;
             background-color: #1d9738;
             text-align: center;
         }
 
+        .subrelatorio {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: solid;
+            background-color: #696b6a;
+        }
+
         .subadicionar:hover {
             color: #000000;
         }
+
+        .subrelatorio:hover {
+            color: #000000;
+        }
+
+
     </style>
 </head>
 
 <body>
-    <div class="adicionar">
-        <div id="btnAdd" class="subadicionar">&#43 Adicionar</div>
-    </div>
-    <table id="myTable">
-        <thead>
-            <tr>
-                <th class="no_edition">ID</th>
-                <th class="no_edition">DIA</th>
-                <th class="header-receitas">RECEITAS TOTAIS</th>
-                <th class="header-receitas">RECEITA P/ KM</th>
-                <th class="header-custos">CUSTOS TOTAIS</th>
-                <th class="header-custos">CUSTOS P/ KM</th>
-                <th class="header-lucro">LUCRO DO DIA</th>
-                <th class="header-lucro">LUCRO P/ HORA</th>
-                <th class="header-lucro">LUCRO P/ KM</th>
-                <th class="no_edition">AÇÕES</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="header"></div>
+    <div class="container">
 
-        </tbody>
-    </table>
+        <table id="myTable">
+            <thead>
+                <tr>
+                    <th class="no_edition">ID</th>
+                    <th class="no_edition">DIA</th>
+                    <th class="header-receitas">RECEITAS TOTAIS</th>
+                    <th class="header-receitas">RECEITA P/ KM</th>
+                    <th class="header-custos">CUSTOS TOTAIS</th>
+                    <th class="header-custos">CUSTOS P/ KM</th>
+                    <th class="header-lucro">LUCRO DO DIA</th>
+                    <th class="header-lucro">LUCRO P/ HORA</th>
+                    <th class="header-lucro">LUCRO P/ KM</th>
+                    <th class="no_edition">AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <div class="btn">
+            <div id="btnAdd" class="subadicionar">&#43 Adicionar</div>
+            <div id="btnRep" class="subrelatorio">Relatório</div>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -123,8 +149,8 @@
                         row.appendChild(idCell);
                         row.appendChild(dayCell);
 
-                        const receitasTotais = (item.receipts.uber_value || 0) + (item.receipts.pop_99_value || 0) + (item.receipts.promotions || 0) + (item.receipts.run_outside || 0);
-                        const receitaPorKm = receitasTotais / item.kilometer;
+                        const receitasTotais = item.receipts.total_receipt;
+                        const receitaPorKm = item.receipts.total_receipt_by_kilometer;
                         const receitasTotaisCell = document.createElement("td");
                         receitasTotaisCell.textContent = receitasTotais.toFixed(2);
                         const receitaPorKmCell = document.createElement("td");
@@ -132,9 +158,9 @@
                         row.appendChild(receitasTotaisCell);
                         row.appendChild(receitaPorKmCell);
 
-                        const custosAluguel = 0.54
+                        const custosAluguel = item.costs.rent;
                         const custosTotais = item.costs.total_cost;
-                        const custosPorKm = custosTotais / item.kilometer;
+                        const custosPorKm = item.costs.total_cost_by_kilometer;
                         const custosTotaisCell = document.createElement("td");
                         custosTotaisCell.textContent = custosTotais.toFixed(2);
                         const custosPorKmCell = document.createElement("td");
@@ -142,9 +168,9 @@
                         row.appendChild(custosTotaisCell);
                         row.appendChild(custosPorKmCell);
 
-                        const lucroDoDia = receitasTotais - custosTotais;
-                        const lucroPorHora = lucroDoDia / item.worked_hours;
-                        const lucroPorKm = lucroDoDia / item.kilometer;
+                        const lucroDoDia = item.profit.day;
+                        const lucroPorHora = item.profit.hour;
+                        const lucroPorKm = item.profit.profit_by_kilometer;
                         const lucroDoDiaCell = document.createElement("td");
                         lucroDoDiaCell.textContent = lucroDoDia.toFixed(2);
                         const lucroPorHoraCell = document.createElement("td");
@@ -173,7 +199,7 @@
             const itemId = tr.querySelector("td").innerText;
 
             localStorage.setItem("itemId", itemId)
-            
+
 
             window.location.href = "/update"
 
@@ -187,7 +213,7 @@
                 const response = await fetch(`api/v1/uber/delete?id=${itemId}`, {
                     method: 'DELETE'
                 });
-                
+
                 if (!response.ok) {
                     const errorMessage = await response.text();
                     throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);

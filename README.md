@@ -63,7 +63,8 @@ response:
                 "99_pop_value": 90.53,
                 "promotions": 67.78,
                 "run_outside": 56.90,
-                "total_receipt_by_kilometer": 1.74
+                "total_receipt_by_kilometer": 1.74,
+                "total_receipt": 300
             },
             "profit": {
                 "day": 171.40,
@@ -94,7 +95,8 @@ response:
                 "99_pop_value": 90.53,
                 "promotions": 67.78,
                 "run_outside": 56.90,
-                "total_receipt_by_kilometer": 1.74
+                "total_receipt_by_kilometer": 1.74,
+                "total_receipt": 300
             },
             "profit": {
                 "day": 171.40,

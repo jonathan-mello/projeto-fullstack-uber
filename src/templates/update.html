@@ -119,7 +119,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function (id) {
             id = localStorage.getItem("itemId")
-
+            
             costs = await fetch(`/api/v1/uber/getday?id=${id}`, {
                 method: "GET"
             });

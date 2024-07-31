@@ -115,6 +115,7 @@ def query_data(db: Session = Depends(get_db)):
         profit_by_kilometer = (
             float(total_receipt_by_kilometer) - total_cost_by_kilometer
         )
+        total_receipt = dado.receipt.uber_value + dado.receipt.pop_99_value + dado.receipt.promotions + dado.receipt.run_outside
 
         result = {
             "id": dado.id,
@@ -128,22 +129,23 @@ def query_data(db: Session = Depends(get_db)):
             "receipt_id": dado.receipt_id,
             "costs": {
                 "liter_gasoline_value": dado.liter_gasoline_value,
-                "cost_by_gasoline": round(cost_by_gasoline, 2),
-                "rent": round(rent, 2),
-                "total_cost_by_kilometer": round(total_cost_by_kilometer, 2),
-                "total_cost": round(total_cost, 2),
+                "cost_by_gasoline": cost_by_gasoline,
+                "rent": rent,
+                "total_cost_by_kilometer": total_cost_by_kilometer,
+                "total_cost": total_cost,
             },
             "receipts": {
                 "uber_value": dado.receipt.uber_value,
                 "pop_99_value": dado.receipt.pop_99_value,
                 "promotions": dado.receipt.promotions,
                 "run_outside": dado.receipt.run_outside,
-                "total_receipt_by_kilometer": round(total_receipt_by_kilometer, 2),
+                "total_receipt_by_kilometer": total_receipt_by_kilometer,
+                "total_receipt": total_receipt
             },
             "profit": {
-                "day": round(profit_day, 2),
-                "hour": round(profit_hour, 2),
-                "profit_by_kilometer": round(profit_by_kilometer, 2),
+                "day": profit_day,
+                "hour": profit_hour,
+                "profit_by_kilometer": profit_by_kilometer,
             },
         }
         results.append(result)
